@@ -1,19 +1,12 @@
 import { AgentDock, AgentPanelRoot, useAgentState, useCapability } from '@agent-panel/react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import {
-  dismissHighlight,
-  fetchMeta,
-  fetchRecipe,
-  fetchRecipes,
-  updateRecipe,
-  type RecipeSummary,
-} from './api.js';
+import { dismissHighlight, fetchMeta, fetchRecipe, fetchRecipes, updateRecipe, type Meta } from './api.js';
 import { AgentChrome } from './components/AgentChrome.js';
 import { FormulaTable } from './components/FormulaTable.js';
 import { TimelineView } from './components/TimelineView.js';
 import type { IngredientChange, RecipeDiff } from './lib/diff.js';
 import { formatNumber } from './lib/formula.js';
-import type { Leaven, Recipe, Schedule } from './lib/types.js';
+import type { Leaven, Recipe, RecipeSummary, Schedule } from './lib/types.js';
 
 const PROMPTS = [
   { label: '用剩粉做佛卡夏', text: '用剩下的 300g 麵粉做 75% 含水的佛卡夏' },
@@ -38,7 +31,7 @@ function Shell() {
   const [highlight, setHighlight] = useState<RecipeDiff | null>(null);
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [error, setError] = useState<string | null>(null);
-  const [subscription, setSubscription] = useState(false);
+  const [meta, setMeta] = useState<Meta | null>(null);
   const known = useRef(new Set<string>());
   const primed = useRef(false);
   const recipeIdRef = useRef<string | null>(null);
@@ -84,7 +77,7 @@ function Shell() {
 
   useEffect(() => {
     void fetchMeta()
-      .then((meta) => setSubscription(meta.subscription))
+      .then(setMeta)
       .catch(() => undefined);
     void fetchRecipes()
       .then((body) => applyList(body.recipes))
@@ -118,16 +111,26 @@ function Shell() {
     return map;
   }, [highlight]);
 
+  const selectedRows = useMemo(
+    () => recipe?.ingredients.filter((item) => selected.has(item.id)) ?? [],
+    [recipe, selected],
+  );
+
   const context = useMemo(() => {
     if (!recipe) return { recipeId: '' };
-    const rows = recipe.ingredients.filter((item) => selected.has(item.id));
     return {
       recipeId: recipe.id,
       file: `data/recipes/${recipe.id}.json`,
-      ingredientIds: rows.map((item) => item.id).join(','),
-      selection: rows.map((item) => `${item.name}（${item.id}）`).join('、'),
+      ingredientIds: selectedRows.map((item) => item.id).join(','),
+      selection: selectedRows.map((item) => `${item.name}（${item.id}）`).join('、'),
     };
-  }, [recipe, selected]);
+  }, [recipe, selectedRows]);
+
+  const banner = highlight?.added
+    ? '這份配方是助手剛寫的，黃底列是它放進來的材料。'
+    : highlight && highlight.changes.length > 0
+      ? `助手改了 ${highlight.changes.length} 列，劃掉的是原本的數字。`
+      : null;
 
   async function commit(op: Parameters<typeof updateRecipe>[1]) {
     if (!recipe) return;
@@ -144,7 +147,7 @@ function Shell() {
   const shellClass = [
     'shell',
     panel.open ? 'agent-open' : '',
-    subscription && panel.open ? 'has-sub-note' : '',
+    meta?.subscription && panel.open ? 'has-sub-note' : '',
   ]
     .filter(Boolean)
     .join(' ');
@@ -152,15 +155,7 @@ function Shell() {
   return (
     <div className={shellClass}>
       <aside className="sidebar">
-        <div className="brand">
-          <span className="mark" aria-hidden="true">
-            麥
-          </span>
-          <div>
-            <p className="eyebrow">烘焙筆記</p>
-            <h1>麵包配方本</h1>
-          </div>
-        </div>
+        <h1 className="wordmark">麵包配方本</h1>
         <p className="sidebar-note">以烘焙百分比記配方。改總麵粉，所有克數一起縮放。</p>
         <ul className="recipe-list">
           {recipes.map((item) => (
@@ -178,8 +173,8 @@ function Shell() {
                   {item.highlight === 'new' ? <em>新</em> : null}
                   {item.highlight === 'edited' ? <em>已改</em> : null}
                 </span>
-                <span>
-                  {item.tag} · 含水 {formatNumber(item.hydration, 2)}% ·{' '}
+                <span className="recipe-meta">
+                  {item.tag}，含水 {formatNumber(item.hydration, 2)}%，
                   {item.leaven === 'levain' ? '酸種' : '酵母'}
                 </span>
               </button>
@@ -187,7 +182,15 @@ function Shell() {
           ))}
         </ul>
         <div className="prompts">
-          <p>交給助手</p>
+          <h2>交給助手</h2>
+          <p className="selection-note">
+            {selectedRows.length > 0
+              ? `會一併送出：${selectedRows.map((item) => item.name).join('、')}`
+              : recipe
+                ? `會一併送出整份「${recipe.title}」。`
+                : '先選一份配方。'}
+          </p>
+
           {PROMPTS.map((prompt) => (
             <button
               key={prompt.text}
@@ -198,40 +201,22 @@ function Shell() {
               {prompt.label}
             </button>
           ))}
-          <p className="selection-note">
-            {selected.size > 0
-              ? `會一併送出：${recipe?.ingredients
-                  .filter((item) => selected.has(item.id))
-                  .map((item) => item.name)
-                  .join('、')}`
-              : recipe
-                ? `會一併送出整份「${recipe.title}」。`
-                : '先選一份配方。'}
-          </p>
         </div>
       </aside>
       <main className="workspace" data-editor>
         {recipe ? (
-          <>
+          <div className="sheet" key={recipe.id}>
             <header className="recipe-hero">
-              <p className="eyebrow">
-                {recipe.tag} · {recipe.yieldLabel}
-              </p>
               <h2>{recipe.title}</h2>
-              <p>{recipe.summary}</p>
+              <p>
+                {recipe.tag === recipe.title ? '' : `${recipe.tag}，`}
+                {recipe.yieldLabel}。{recipe.summary}
+              </p>
             </header>
             {error ? <p className="error">{error}</p> : null}
-            {highlight?.added ? (
+            {banner ? (
               <div className="diff-banner">
-                <p>助手寫入了這份配方。暖色列是這次的材料。</p>
-                <button type="button" onClick={() => void clearHighlight(recipe.id)}>
-                  知道了
-                </button>
-              </div>
-            ) : null}
-            {highlight && !highlight.added && highlight.changes.length > 0 ? (
-              <div className="diff-banner">
-                <p>助手改了 {highlight.changes.length} 列。劃掉的是原本的數字。</p>
+                <p>{banner}</p>
                 <button type="button" onClick={() => void clearHighlight(recipe.id)}>
                   知道了
                 </button>
@@ -263,12 +248,12 @@ function Shell() {
                 onSchedule={(schedule: Schedule) => void commit({ op: 'setSchedule', schedule })}
               />
             </div>
-          </>
+          </div>
         ) : (
           <p className="empty">{error ?? '還沒有配方。'}</p>
         )}
       </main>
-      <AgentChrome />
+      {meta ? <AgentChrome meta={meta} /> : null}
       <AgentDock capabilityId="bread-book" context={context} />
     </div>
   );

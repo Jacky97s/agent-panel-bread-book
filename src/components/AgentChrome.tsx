@@ -1,6 +1,7 @@
 import { useAgentState } from '@agent-panel/react';
-import { useEffect, useState } from 'react';
-import { fetchMeta, switchAgent, type AgentPreset, type Meta } from '../api.js';
+import { useState } from 'react';
+import { switchAgent, type Meta } from '../api.js';
+import type { AgentPreset } from '../lib/types.js';
 
 const OPTIONS: { value: AgentPreset; label: string }[] = [
   { value: 'mock', label: '示範代理' },
@@ -9,19 +10,13 @@ const OPTIONS: { value: AgentPreset; label: string }[] = [
   { value: 'gemini', label: 'Gemini CLI' },
 ];
 
-export function AgentChrome() {
+export function AgentChrome({ meta }: { meta: Meta }) {
   const panel = useAgentState();
-  const [meta, setMeta] = useState<Meta | null>(null);
   const [switching, setSwitching] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  useEffect(() => {
-    void fetchMeta()
-      .then(setMeta)
-      .catch(() => setError('讀不到代理程式狀態'));
-  }, []);
-  if (!panel.open || !meta) return null;
+  if (!panel.open) return null;
   return (
-    <div className={`agent-chrome${meta.subscription ? ' has-note' : ''}`}>
+    <div className="agent-chrome">
       <label>
         代理程式
         <select

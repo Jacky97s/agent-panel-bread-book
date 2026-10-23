@@ -94,6 +94,7 @@ export type TimelineEntry = {
   name: string;
   kind: StepKind;
   durationMin: number;
+  notes?: string;
   start: string;
   end: string;
 };
@@ -105,3 +106,17 @@ export type Timeline = {
   totalMin: number;
   anchorKind: 'start' | 'bake';
 };
+
+export type RecipeSummary = {
+  id: string;
+  title: string;
+  summary: string;
+  tag: string;
+  yieldLabel: string;
+  hydration: number;
+  totalFlourG: number;
+  leaven: LeavenKind;
+  highlight: 'new' | 'edited' | null;
+};
+
+export type AgentPreset = 'mock' | 'claude-code' | 'codex' | 'gemini';

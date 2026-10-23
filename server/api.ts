@@ -3,6 +3,7 @@ import { writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import {
   FormulaError,
+  isRecipeId,
   setIngredientGrams,
   setIngredientPercent,
   setLeaven,
@@ -11,10 +12,8 @@ import {
   setTargetHydration,
   setTotalFlour,
 } from '../src/lib/formula.js';
-import type { Leaven, Recipe, Schedule } from '../src/lib/types.js';
+import type { AgentPreset, Leaven, Recipe, Schedule } from '../src/lib/types.js';
 import type { RecipeLibrary } from './library.js';
-
-export type AgentPreset = 'mock' | 'claude-code' | 'codex' | 'gemini';
 
 const PRESETS = new Set<AgentPreset>(['mock', 'claude-code', 'codex', 'gemini']);
 
@@ -61,9 +60,9 @@ export async function handleApi(
       await library.refresh(true);
       return json(res, 200, library.list());
     }
-    const recipeMatch = /^\/api\/recipes\/([a-z0-9][a-z0-9-]{0,63})(\/dismiss)?$/.exec(url.pathname);
-    if (!recipeMatch) return json(res, 404, { error: '找不到' });
-    const id = recipeMatch[1] ?? '';
+    const recipeMatch = /^\/api\/recipes\/([^/]+)(\/dismiss)?$/.exec(url.pathname);
+    const id = recipeMatch?.[1] ?? '';
+    if (!recipeMatch || !isRecipeId(id)) return json(res, 404, { error: '找不到' });
     if (method === 'POST' && recipeMatch[2] === '/dismiss') {
       library.dismiss(id);
       return json(res, 200, { ok: true });

@@ -2,20 +2,8 @@ import { watch, type FSWatcher } from 'node:fs';
 import { mkdir, readdir, readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { diffRecipes, type RecipeDiff } from '../src/lib/diff.js';
-import { FormulaError, normalizeRecipe, serializeRecipe } from '../src/lib/formula.js';
-import type { Recipe } from '../src/lib/types.js';
-
-export type RecipeSummary = {
-  id: string;
-  title: string;
-  summary: string;
-  tag: string;
-  yieldLabel: string;
-  hydration: number;
-  totalFlourG: number;
-  leaven: Recipe['leaven']['kind'];
-  highlight: 'new' | 'edited' | null;
-};
+import { FormulaError, isRecipeId, normalizeRecipe, serializeRecipe } from '../src/lib/formula.js';
+import type { Recipe, RecipeSummary } from '../src/lib/types.js';
 
 export class RecipeLibrary {
   readonly recipesDir: string;
@@ -127,12 +115,13 @@ export class RecipeLibrary {
     let changed = false;
     for (const file of files) {
       const id = file.replace(/\.json$/, '');
-      if (!/^[a-z0-9][a-z0-9-]{0,63}$/.test(id)) continue;
+      if (!isRecipeId(id)) continue;
       seen.add(id);
       const full = path.join(this.recipesDir, file);
+      const onDisk = await readFile(full, 'utf8');
       let parsed: unknown;
       try {
-        parsed = JSON.parse(await readFile(full, 'utf8')) as unknown;
+        parsed = JSON.parse(onDisk) as unknown;
       } catch {
         continue;
       }
@@ -145,7 +134,6 @@ export class RecipeLibrary {
       }
       if (normalized.id !== id) continue;
       const canonical = serializeRecipe(normalized);
-      const onDisk = await readFile(full, 'utf8');
       const own = this.selfWrite.delete(id);
       if (onDisk !== canonical) {
         this.selfWrite.add(id);

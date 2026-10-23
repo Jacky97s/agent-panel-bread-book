@@ -4,7 +4,8 @@ import path from 'node:path';
 import { ACP_PRESETS } from '@agent-panel/core/acp';
 import { createAgentServer, type AgentTarget } from '@agent-panel/server';
 import type { Plugin } from 'vite';
-import { agentFileFor, handleApi, isPreset, type AgentPreset } from './api.js';
+import type { AgentPreset } from '../src/lib/types.js';
+import { agentFileFor, handleApi, isPreset } from './api.js';
 import { createBreadCapability } from './capability.js';
 import { RecipeLibrary } from './library.js';
 
@@ -25,6 +26,7 @@ export function breadBookPlugin(root: string): Plugin {
         capabilities: [createBreadCapability(library.recipesDir, () => library.refresh(true))],
       });
       const opened = library.open();
+      const agentMiddleware = agent.middleware();
       server.middlewares.use((req, res, next) => {
         void opened
           .then(() =>
@@ -41,7 +43,7 @@ export function breadBookPlugin(root: string): Plugin {
           )
           .then((handled) => {
             if (handled) return;
-            agent.middleware()(req, res, next);
+            agentMiddleware(req, res, next);
           })
           .catch((error: unknown) => {
             if (!res.headersSent) {
@@ -55,7 +57,6 @@ export function breadBookPlugin(root: string): Plugin {
         library.close();
         void agent.close();
       });
-      void opened;
     },
   };
 }
@@ -73,15 +74,9 @@ function readPreset(dataDir: string): { preset: AgentPreset; locked: boolean } {
 }
 
 function agentTarget(root: string, preset: AgentPreset): AgentTarget {
-  if (preset === 'claude-code') return mutableCommand(ACP_PRESETS['claude-code']);
-  if (preset === 'codex') return mutableCommand(ACP_PRESETS.codex);
-  if (preset === 'gemini') return mutableCommand(ACP_PRESETS.gemini);
-  const mock = path.join(root, 'dist', 'mock-agent.mjs');
-  return { command: process.execPath, args: [mock] };
-}
-
-function mutableCommand(preset: { command: string; args?: readonly string[] }): AgentTarget {
-  return { command: preset.command, args: [...(preset.args ?? [])] };
+  if (preset === 'mock') return { command: process.execPath, args: [path.join(root, 'dist', 'mock-agent.mjs')] };
+  const { command, args = [] } = ACP_PRESETS[preset];
+  return { command, args: [...args] };
 }
 
 function isHttp1(server: unknown): server is Server {

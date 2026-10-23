@@ -1,6 +1,7 @@
 import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 import type { Capability } from '@agent-panel/core';
+import { isRecipeId } from '../src/lib/formula.js';
 
 export const CAPABILITY_ID = 'bread-book';
 
@@ -42,7 +43,7 @@ export function createBreadCapability(
         'Write percents, totalFlourG, targetHydration, wholeWheatPercent, or scheduleRequest. Grams are recomputed.',
       ];
       const recipeId = typeof ctx.recipeId === 'string' ? ctx.recipeId : '';
-      if (/^[a-z0-9][a-z0-9-]{0,63}$/.test(recipeId)) {
+      if (isRecipeId(recipeId)) {
         const file = path.join(recipesDir, `${recipeId}.json`);
         lines.push(`selected recipe file: ${file}`);
         lines.push(await readFile(file, 'utf8').catch(() => ''));
@@ -52,8 +53,6 @@ export function createBreadCapability(
       }
       return lines;
     },
-    onComplete: async () => {
-      await onComplete();
-    },
+    onComplete,
   };
 }

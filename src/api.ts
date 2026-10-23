@@ -1,24 +1,10 @@
 import type { RecipeDiff } from './lib/diff.js';
-import type { Leaven, Recipe, Schedule } from './lib/types.js';
-
-export type AgentPreset = 'mock' | 'claude-code' | 'codex' | 'gemini';
+import type { AgentPreset, Leaven, Recipe, RecipeSummary, Schedule } from './lib/types.js';
 
 export type Meta = {
   preset: AgentPreset;
   locked: boolean;
   subscription: boolean;
-};
-
-export type RecipeSummary = {
-  id: string;
-  title: string;
-  summary: string;
-  tag: string;
-  yieldLabel: string;
-  hydration: number;
-  totalFlourG: number;
-  leaven: 'yeast' | 'levain';
-  highlight: 'new' | 'edited' | null;
 };
 
 export type RecipeResponse = {

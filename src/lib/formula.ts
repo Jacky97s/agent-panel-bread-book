@@ -56,6 +56,10 @@ const GROUPS = new Set<IngredientGroup>([
   'other',
 ]);
 
+export function isRecipeId(value: string): boolean {
+  return /^[a-z0-9][a-z0-9-]{0,63}$/.test(value);
+}
+
 export function serializeRecipe(recipe: Recipe): string {
   return `${JSON.stringify(recipe, null, 2)}\n`;
 }
@@ -291,11 +295,10 @@ function ensureLeavenRows(recipe: Recipe) {
 function rebalanceFlour(recipe: Recipe) {
   const flours = recipe.ingredients.filter((item) => item.group === 'flour');
   if (flours.length === 0) throw new FormulaError('配方至少要有一種麵粉');
-  let balance = flours.find((item) => item.balance && item.role !== 'preferment');
-  if (!balance) {
-    balance = flours.find((item) => item.role !== 'preferment') ?? flours[0];
-    if (!balance) throw new FormulaError('配方至少要有一種麵粉');
-  }
+  const balance =
+    flours.find((item) => item.balance && item.role !== 'preferment') ??
+    flours.find((item) => item.role !== 'preferment') ??
+    flours[0]!;
   for (const flour of flours) flour.balance = flour.id === balance.id;
   const fixed = flours.filter((item) => item.id !== balance.id && item.role === 'preferment');
   const flexible = flours.filter((item) => item.id !== balance.id && item.role !== 'preferment');
@@ -609,7 +612,7 @@ function coerceSchedule(value: unknown): Recipe['schedule'] {
 function requireSlug(value: unknown, label: string): string {
   if (typeof value !== 'string') throw new FormulaError(`${label} 不正確`);
   const id = slug(value);
-  if (!/^[a-z0-9][a-z0-9-]{0,63}$/.test(id)) throw new FormulaError(`${label} 不正確`);
+  if (!isRecipeId(id)) throw new FormulaError(`${label} 不正確`);
   return id;
 }
 
