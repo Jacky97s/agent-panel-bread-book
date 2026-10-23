@@ -1,0 +1,139 @@
+{
+  "version": 1,
+  "id": "country-sourdough",
+  "title": "鄉村酸種",
+  "summary": "一成全麥、半成黑麥，酵種接種兩成。冷藏一整夜，隔天早上出爐。",
+  "tag": "鄉村麵包",
+  "yieldLabel": "一顆",
+  "totalFlourG": 500,
+  "targetHydration": 78,
+  "hydration": 78,
+  "leaven": {
+    "kind": "levain",
+    "name": "酸種酵種",
+    "inoculation": 20,
+    "starterHydration": 100
+  },
+  "baselineTempC": 24,
+  "baselineLeaven": "levain",
+  "roomTempC": 24,
+  "ingredients": [
+    {
+      "id": "bread-flour",
+      "name": "高筋麵粉",
+      "group": "flour",
+      "percent": 75,
+      "grams": 375,
+      "balance": true,
+      "role": "dough"
+    },
+    {
+      "id": "whole-wheat",
+      "name": "全麥麵粉",
+      "group": "flour",
+      "percent": 10,
+      "grams": 50,
+      "role": "dough"
+    },
+    {
+      "id": "rye",
+      "name": "黑麥麵粉",
+      "group": "flour",
+      "percent": 5,
+      "grams": 25,
+      "role": "dough"
+    },
+    {
+      "id": "preferment-flour",
+      "name": "酵種麵粉",
+      "group": "flour",
+      "percent": 10,
+      "grams": 50,
+      "role": "preferment"
+    },
+    {
+      "id": "preferment-water",
+      "name": "酵種的水",
+      "group": "water",
+      "percent": 10,
+      "grams": 50,
+      "role": "preferment"
+    },
+    {
+      "id": "water",
+      "name": "水",
+      "group": "water",
+      "percent": 68,
+      "grams": 340,
+      "balance": true,
+      "role": "dough"
+    },
+    {
+      "id": "salt",
+      "name": "鹽",
+      "group": "salt",
+      "percent": 2.2,
+      "grams": 11,
+      "role": "dough"
+    }
+  ],
+  "steps": [
+    {
+      "id": "autolyse",
+      "name": "自解",
+      "kind": "autolyse",
+      "baselineMin": 40,
+      "durationMin": 40,
+      "notes": "麵粉與水先拌勻，鹽和酵種先不放。"
+    },
+    {
+      "id": "mix",
+      "name": "拌入酵種與鹽",
+      "kind": "mix",
+      "baselineMin": 15,
+      "durationMin": 15
+    },
+    {
+      "id": "bulk",
+      "name": "一次發酵",
+      "kind": "bulk",
+      "baselineMin": 240,
+      "durationMin": 240,
+      "notes": "每隔一段時間摺一次，共三到四次。"
+    },
+    {
+      "id": "bench",
+      "name": "預整型休息",
+      "kind": "bench",
+      "baselineMin": 25,
+      "durationMin": 25
+    },
+    {
+      "id": "shape",
+      "name": "整型",
+      "kind": "shape",
+      "baselineMin": 15,
+      "durationMin": 15
+    },
+    {
+      "id": "cold",
+      "name": "冷藏最終發酵",
+      "kind": "cold",
+      "baselineMin": 720,
+      "durationMin": 720,
+      "notes": "4°C。這段不隨室溫調整。"
+    },
+    {
+      "id": "bake",
+      "name": "烘烤",
+      "kind": "bake",
+      "baselineMin": 45,
+      "durationMin": 45,
+      "notes": "荷蘭鍋 230°C，後半開蓋。"
+    }
+  ],
+  "schedule": {
+    "anchorKind": "bake",
+    "anchor": "2026-10-25T08:00:00+08:00"
+  }
+}

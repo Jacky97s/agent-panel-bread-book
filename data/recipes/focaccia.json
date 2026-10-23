@@ -1,0 +1,107 @@
+{
+  "version": 1,
+  "id": "focaccia",
+  "title": "佛卡夏",
+  "summary": "高含水、多橄欖油，在烤盤裡發酵後直接進烤箱。時間以 24°C、即溶酵母為基準。",
+  "tag": "佛卡夏",
+  "yieldLabel": "一盤",
+  "totalFlourG": 500,
+  "targetHydration": 78,
+  "hydration": 78,
+  "leaven": {
+    "kind": "yeast",
+    "name": "即溶酵母",
+    "percent": 0.8
+  },
+  "baselineTempC": 24,
+  "baselineLeaven": "yeast",
+  "roomTempC": 24,
+  "ingredients": [
+    {
+      "id": "bread-flour",
+      "name": "高筋麵粉",
+      "group": "flour",
+      "percent": 100,
+      "grams": 500,
+      "balance": true,
+      "role": "dough"
+    },
+    {
+      "id": "water",
+      "name": "水",
+      "group": "water",
+      "percent": 78,
+      "grams": 390,
+      "balance": true,
+      "role": "dough"
+    },
+    {
+      "id": "salt",
+      "name": "鹽",
+      "group": "salt",
+      "percent": 2.5,
+      "grams": 12.5,
+      "role": "dough"
+    },
+    {
+      "id": "yeast",
+      "name": "即溶酵母",
+      "group": "yeast",
+      "percent": 0.8,
+      "grams": 4,
+      "role": "dough"
+    },
+    {
+      "id": "oil",
+      "name": "橄欖油",
+      "group": "fat",
+      "percent": 5,
+      "grams": 25,
+      "role": "dough"
+    }
+  ],
+  "steps": [
+    {
+      "id": "mix",
+      "name": "攪拌",
+      "kind": "mix",
+      "baselineMin": 15,
+      "durationMin": 15,
+      "notes": "水、油、鹽與酵母拌勻，不需出膜。"
+    },
+    {
+      "id": "bulk",
+      "name": "一次發酵",
+      "kind": "bulk",
+      "baselineMin": 150,
+      "durationMin": 150,
+      "notes": "中間用油手摺兩次。"
+    },
+    {
+      "id": "pan",
+      "name": "倒入烤盤、指壓",
+      "kind": "shape",
+      "baselineMin": 20,
+      "durationMin": 20
+    },
+    {
+      "id": "proof",
+      "name": "二次發酵",
+      "kind": "proof",
+      "baselineMin": 45,
+      "durationMin": 45
+    },
+    {
+      "id": "bake",
+      "name": "烘烤",
+      "kind": "bake",
+      "baselineMin": 25,
+      "durationMin": 25,
+      "notes": "230°C，出爐前再淋一點油與鹽花。"
+    }
+  ],
+  "schedule": {
+    "anchorKind": "start",
+    "anchor": "2026-10-24T09:00:00+08:00"
+  }
+}
