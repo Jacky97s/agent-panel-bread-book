@@ -120,7 +120,7 @@ export function totalMinutes(steps: Pick<Step, 'durationMin' | 'baselineMin'>[])
 }
 
 export function buildTimeline(
-  steps: Pick<Step, 'id' | 'name' | 'kind' | 'durationMin' | 'baselineMin'>[],
+  steps: Pick<Step, 'id' | 'name' | 'kind' | 'durationMin' | 'baselineMin' | 'notes'>[],
   schedule: Schedule | null,
   now = new Date(),
 ): Timeline {
@@ -144,6 +144,7 @@ export function buildTimeline(
       name: step.name,
       kind: step.kind,
       durationMin,
+      notes: step.notes,
       start: new Date(cursor).toISOString(),
       end: new Date(end).toISOString(),
     });
@@ -184,5 +185,14 @@ export function formatClock(iso: string): string {
     hour: '2-digit',
     minute: '2-digit',
     hourCycle: 'h23',
+  }).format(new Date(iso));
+}
+
+export function formatDay(iso: string): string {
+  return new Intl.DateTimeFormat('zh-Hant-TW', {
+    timeZone: TAIPEI,
+    month: 'numeric',
+    day: 'numeric',
+    weekday: 'short',
   }).format(new Date(iso));
 }

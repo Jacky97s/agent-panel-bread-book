@@ -49,9 +49,19 @@ export function FormulaTable({
 
   return (
     <section className="card" aria-labelledby="formula-heading">
-      <div className="card-head">
-        <h2 id="formula-heading">烘焙百分比</h2>
-        <p>總麵粉是 100%。改上面的總重，每一列的克數一起縮放。</p>
+      <div className="card-head formula-head">
+        <div>
+          <h2 id="formula-heading">烘焙百分比</h2>
+          <p>總麵粉是 100%。改下面的總麵粉，每一列的克數一起縮放。</p>
+        </div>
+        <p className="hydration">
+          <strong>{formatNumber(hydration, 2)}%</strong>
+          <span>
+            {hydrationGap
+              ? `實際含水 ${formatNumber(hydration, 2)}%，目標 ${formatNumber(recipe.targetHydration, 2)}%。其他液體已經高過目標。`
+              : '含水率含水、酵種的水、牛奶 87%、蛋 75%、奶油 16%。油不算水。'}
+          </span>
+        </p>
       </div>
       <div className="controls">
         <label>
@@ -91,14 +101,6 @@ export function FormulaTable({
         </label>
         <LeavenFields recipe={recipe} onLeaven={onLeaven} />
       </div>
-      <p className="hydration">
-        <strong>{formatNumber(hydration, 2)}%</strong>
-        <span>
-          {hydrationGap
-            ? `實際含水 ${formatNumber(hydration, 2)}%，目標 ${formatNumber(recipe.targetHydration, 2)}%。其他液體已經高過目標。`
-            : '含水率含水、酵種的水、牛奶 87%、蛋 75%、奶油 16%。油不算水。'}
-        </span>
-      </p>
       <table className="formula">
         <caption className="sr-only">烘焙百分比與克數</caption>
         <thead>

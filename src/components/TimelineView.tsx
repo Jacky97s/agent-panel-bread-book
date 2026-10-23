@@ -1,5 +1,14 @@
-import { buildTimeline, formatClock, formatDuration, formatTaipei, inputValueToTaipeiISO, toTaipeiInputValue } from '../lib/schedule.js';
-import type { Recipe, Schedule } from '../lib/types.js';
+import {
+  buildTimeline,
+  formatClock,
+  formatDay,
+  formatDuration,
+  formatTaipei,
+  inputValueToTaipeiISO,
+  taipeiISOFromDate,
+  toTaipeiInputValue,
+} from '../lib/schedule.js';
+import type { Recipe, Schedule, TimelineEntry } from '../lib/types.js';
 
 export function TimelineView({
   recipe,
@@ -12,17 +21,19 @@ export function TimelineView({
 }) {
   const timeline = buildTimeline(recipe.steps, recipe.schedule);
   const mode = recipe.schedule?.anchorKind ?? 'start';
-  const anchorValue = recipe.schedule
-    ? toTaipeiInputValue(recipe.schedule.anchor)
-    : toTaipeiInputValue(mode === 'bake' ? timeline.bakeOut : timeline.start);
+  const anchorLabel = mode === 'bake' ? '出爐時間' : '開始時間';
+  const anchorValue = toTaipeiInputValue(
+    recipe.schedule?.anchor ?? (mode === 'bake' ? timeline.bakeOut : timeline.start),
+  );
+  const days = groupByDay(timeline.entries);
 
   return (
-    <section className="card" aria-labelledby="timeline-heading">
+    <section className="slip" aria-labelledby="timeline-heading">
       <div className="card-head">
         <h2 id="timeline-heading">發酵時程</h2>
         <p>
           {mode === 'bake' ? '從出爐時間倒推。' : '從開始時間往後排。'}
-          室溫只改自解、一次發酵、二次發酵；冷藏與烘烤不動。
+          室溫只改自解、一次發酵、二次發酵，冷藏與烘烤不動。
         </p>
       </div>
       {scheduleChanged ? <p className="diff-banner">時程已依新的出爐時間重排。</p> : null}
@@ -32,10 +43,7 @@ export function TimelineView({
             type="button"
             aria-pressed={mode === 'start'}
             onClick={() =>
-              onSchedule({
-                anchorKind: 'start',
-                anchor: inputValueToTaipeiISO(toTaipeiInputValue(timeline.start)) ?? recipe.schedule?.anchor ?? '',
-              })
+              onSchedule({ anchorKind: 'start', anchor: taipeiISOFromDate(new Date(timeline.start)) })
             }
           >
             從開始順推
@@ -44,48 +52,55 @@ export function TimelineView({
             type="button"
             aria-pressed={mode === 'bake'}
             onClick={() =>
-              onSchedule({
-                anchorKind: 'bake',
-                anchor: inputValueToTaipeiISO(toTaipeiInputValue(timeline.bakeOut)) ?? recipe.schedule?.anchor ?? '',
-              })
+              onSchedule({ anchorKind: 'bake', anchor: taipeiISOFromDate(new Date(timeline.bakeOut)) })
             }
           >
             指定出爐
           </button>
         </div>
         <label>
-          {mode === 'bake' ? '出爐時間' : '開始時間'}
+          {anchorLabel}
           <input
             type="datetime-local"
-            aria-label={mode === 'bake' ? '出爐時間' : '開始時間'}
+            aria-label={anchorLabel}
             value={anchorValue}
             onChange={(event) => {
               const anchor = inputValueToTaipeiISO(event.target.value);
-              if (!anchor) return;
-              onSchedule({ anchorKind: mode, anchor });
+              if (anchor) onSchedule({ anchorKind: mode, anchor });
             }}
           />
         </label>
       </div>
-      <p className="timeline-summary">
-        <span>{formatTaipei(timeline.start)} 開始</span>
-        <span>{formatDuration(timeline.totalMin)}</span>
+      {days.map(({ day, entries }) => (
+        <div className="timeline-day" key={day}>
+          <h3>{day}</h3>
+          <ol className="timeline">
+            {entries.map((entry) => (
+              <li key={entry.stepId}>
+                <time dateTime={entry.start}>{formatClock(entry.start)}</time>
+                <span className="step-name">{entry.name}</span>
+                <span className="leader" aria-hidden="true" />
+                <span className="step-duration">{formatDuration(entry.durationMin)}</span>
+                {entry.notes ? <small>{entry.notes}</small> : null}
+              </li>
+            ))}
+          </ol>
+        </div>
+      ))}
+      <p className="timeline-total">
         <span>{formatTaipei(timeline.bakeOut)} 出爐</span>
+        <span>共 {formatDuration(timeline.totalMin)}</span>
       </p>
-      <ol className="timeline">
-        {timeline.entries.map((entry) => (
-          <li key={entry.stepId}>
-            <time dateTime={entry.start}>{formatClock(entry.start)}</time>
-            <div>
-              <strong>{entry.name}</strong>
-              <span>{formatDuration(entry.durationMin)}</span>
-              {recipe.steps.find((step) => step.id === entry.stepId)?.notes ? (
-                <small>{recipe.steps.find((step) => step.id === entry.stepId)?.notes}</small>
-              ) : null}
-            </div>
-          </li>
-        ))}
-      </ol>
     </section>
   );
+}
+
+function groupByDay(entries: TimelineEntry[]): { day: string; entries: TimelineEntry[] }[] {
+  const days: { day: string; entries: TimelineEntry[] }[] = [];
+  for (const entry of entries) {
+    const day = formatDay(entry.start);
+    if (days.at(-1)?.day !== day) days.push({ day, entries: [] });
+    days.at(-1)!.entries.push(entry);
+  }
+  return days;
 }
