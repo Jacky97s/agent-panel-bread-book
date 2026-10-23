@@ -1,0 +1,336 @@
+:root {
+  color: #241c16;
+  background: #f3eadc;
+  font-family: "Avenir Next", "PingFang TC", "Noto Sans TC", "WenQuanYi Micro Hei", sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at top left, rgba(196, 122, 74, 0.16), transparent 28rem),
+    #f3eadc;
+}
+
+button, input, select { font: inherit; color: inherit; }
+
+button { cursor: pointer; }
+
+h1, h2, .recipe-title, .brand h1 {
+  font-family: "Iowan Old Style", Palatino, "Songti TC", "Noto Serif TC", "WenQuanYi Micro Hei", serif;
+  font-weight: 560;
+  letter-spacing: -0.02em;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
+.shell {
+  display: grid;
+  grid-template-columns: 280px minmax(0, 1fr);
+  min-height: 100vh;
+}
+
+.shell.agent-open { padding-right: 400px; }
+
+.sidebar {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow: auto;
+  padding: 28px 18px 32px;
+  background: rgba(255, 248, 238, 0.72);
+  border-right: 1px solid #e3d5c3;
+}
+
+.brand { display: flex; gap: 12px; align-items: center; }
+
+.mark {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  background: #9a4e2c;
+  color: #fff8ee;
+  font-family: "Iowan Old Style", Palatino, serif;
+  font-size: 22px;
+}
+
+.eyebrow {
+  margin: 0;
+  color: #8a6246;
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.brand h1 { margin: 0; font-size: 28px; }
+
+.sidebar-note, .selection-note, .prompts p { color: #6d5c4d; font-size: 14px; }
+
+.recipe-list { list-style: none; margin: 18px 0; padding: 0; display: grid; gap: 8px; }
+
+.recipe-list button, .prompts button, .modes button, .diff-banner button {
+  width: 100%;
+  text-align: left;
+  border: 1px solid #e3d5c3;
+  background: #fffaf3;
+  border-radius: 12px;
+  padding: 10px 12px;
+}
+
+.recipe-list button[aria-current="true"] {
+  border-color: transparent;
+  background: #9a4e2c;
+  color: #fff8ee;
+}
+
+.recipe-title { display: flex; justify-content: space-between; gap: 8px; font-size: 18px; }
+
+.recipe-list button span:last-child { display: block; margin-top: 2px; font-size: 13px; opacity: 0.8; }
+
+.recipe-title em {
+  font-style: normal;
+  font-family: "Avenir Next", "PingFang TC", sans-serif;
+  font-size: 12px;
+  border-radius: 999px;
+  padding: 1px 7px;
+  background: #f6e1b6;
+  color: #6e3420;
+}
+
+.recipe-list button[aria-current="true"] .recipe-title em { background: #fff8ee; }
+
+.prompts { display: grid; gap: 8px; }
+
+.prompts button { width: auto; }
+
+.workspace { padding: 36px 40px 96px; }
+
+.recipe-hero h2 { margin: 4px 0 8px; font-size: 46px; line-height: 1.05; }
+
+.recipe-hero p:last-child { max-width: 42rem; margin-top: 0; color: #5c4d40; }
+
+.columns {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(280px, 0.85fr);
+  gap: 18px;
+  align-items: start;
+}
+
+.columns > .card:last-child {
+  position: sticky;
+  top: 18px;
+}
+
+.card {
+  background: rgba(255, 250, 243, 0.92);
+  border: 1px solid #e4d6c4;
+  border-radius: 18px;
+  padding: 18px;
+  box-shadow: 0 16px 40px rgba(70, 42, 22, 0.04);
+}
+
+.card-head h2 { margin: 0 0 4px; font-size: 26px; }
+
+.card-head p, .hydration span, .timeline-summary, .ingredient-meta { color: #6d5c4d; }
+
+.controls, .leaven, .schedule-controls, .modes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 16px;
+  align-items: end;
+}
+
+.controls { margin: 14px 0; }
+
+.controls label, .leaven label, .schedule-controls label, .agent-chrome label {
+  display: grid;
+  gap: 4px;
+  font-size: 13px;
+  color: #6d5c4d;
+}
+
+.control { display: flex; align-items: center; gap: 6px; }
+
+input[type="text"], input[type="number"], input:not([type]), input[inputmode="decimal"], select, input[type="datetime-local"] {
+  border: 1px solid #e0d1c0;
+  background: #fff;
+  border-radius: 8px;
+  padding: 7px 8px;
+  min-width: 0;
+}
+
+.formula input[inputmode="decimal"] { width: 5.2rem; }
+
+.formula input[readonly] { background: transparent; border-color: transparent; color: #6d5c4d; }
+
+.hydration {
+  display: flex;
+  gap: 12px;
+  align-items: baseline;
+  margin: 0 0 12px;
+}
+
+.hydration strong {
+  font-family: "Iowan Old Style", Palatino, serif;
+  font-size: 42px;
+  line-height: 1;
+  color: #3f6b52;
+}
+
+.formula { width: 100%; border-collapse: collapse; }
+
+.formula th {
+  text-align: left;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  color: #8a7564;
+  font-weight: 600;
+  padding: 0 6px 8px;
+}
+
+.formula td { border-top: 1px solid #efe2d3; padding: 8px 6px; vertical-align: middle; }
+
+.formula tfoot td { font-size: 14px; color: #6d5c4d; }
+
+.ingredient-name { display: block; }
+
+.ingredient-meta { display: block; font-size: 12px; }
+
+.row-changed { background: #f8e4bf; }
+
+.row-changed td:first-child { box-shadow: inset 3px 0 0 #9a4e2c; }
+
+.row-selected { outline: 1px solid #c4a574; outline-offset: -1px; }
+
+.diff-old { color: #8a6246; margin-right: 6px; }
+
+.diff-banner {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+  margin: 0 0 12px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: #f6e1b6;
+  color: #5c3b22;
+}
+
+.diff-banner p { margin: 0; }
+
+.diff-banner button { width: auto; background: #fffaf3; }
+
+.timeline-summary {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin: 14px 0;
+  font-size: 14px;
+}
+
+.timeline { list-style: none; margin: 0; padding: 0; display: grid; gap: 0; }
+
+.timeline li {
+  display: grid;
+  grid-template-columns: 64px 1fr;
+  gap: 10px;
+  padding: 8px 0 8px 12px;
+  border-left: 2px solid #e4d0b8;
+}
+
+.timeline time { color: #9a4e2c; font-variant-numeric: tabular-nums; }
+
+.timeline strong, .timeline span, .timeline small { display: block; }
+
+.timeline span, .timeline small { color: #6d5c4d; font-size: 13px; }
+
+.modes button { width: auto; }
+
+.modes button[aria-pressed="true"] {
+  background: #3f6b52;
+  color: #f6fff8;
+  border-color: transparent;
+}
+
+.error, .chrome-error { color: #8d2f2f; }
+
+.empty { padding: 48px 0; }
+
+.ap-root {
+  --ap-bg: #f6f0e6;
+  --ap-fg: #241c16;
+  --ap-muted: #6d5c4d;
+  --ap-border: #e0d1c0;
+  --ap-accent: #9a4e2c;
+  --ap-accent-fg: #fff8ee;
+  --ap-surface: #fffaf3;
+  --ap-danger: #8d2f2f;
+  --ap-width: 400px;
+}
+
+.shell.agent-open .ap-transcript { padding-top: 128px; }
+
+.shell.agent-open.has-sub-note .ap-transcript { padding-top: 168px; }
+
+.agent-chrome {
+  position: fixed;
+  z-index: 35;
+  top: 49px;
+  right: 0;
+  width: 400px;
+  padding: 10px 14px 12px;
+  background: var(--ap-bg, #f6f0e6);
+  border-bottom: 1px solid var(--ap-border, #e0d1c0);
+}
+
+.agent-chrome p { margin: 6px 0 0; color: #6d5c4d; font-size: 13px; }
+
+.sub-note {
+  padding-left: 8px;
+  border-left: 3px solid #3f6b52;
+}
+
+@media (max-width: 980px) {
+  .shell, .shell.agent-open { grid-template-columns: 1fr; padding-right: 0; }
+  .sidebar { position: relative; height: auto; }
+  .columns { grid-template-columns: 1fr; }
+  .columns > .card:last-child { position: static; }
+  .recipe-hero h2 { font-size: 36px; }
+  .workspace { padding: 24px 16px 120px; }
+  .formula input[inputmode="decimal"] { width: 4.2rem; }
+}
+
+@media (prefers-color-scheme: dark) {
+  :root { color: #f3efe8; background: #1b1916; }
+  body { background: #1b1916; }
+  .sidebar { background: #221e1a; border-right-color: #3a342d; }
+  .card, .recipe-list button, .prompts button, .modes button, .diff-banner button, input, select {
+    background: #2a251f;
+    border-color: #3a342d;
+    color: inherit;
+  }
+  .recipe-list button[aria-current="true"] { background: #c4845c; color: #1b120e; }
+  .card-head p, .hydration span, .timeline-summary, .ingredient-meta, .sidebar-note, .selection-note, .prompts p, .timeline span, .timeline small {
+    color: #cbbbaa;
+  }
+  .formula td { border-top-color: #3a342d; }
+  .row-changed { background: #4a351c; }
+  .diff-banner { background: #4a351c; color: #f6e1b6; }
+  .hydration strong { color: #8fbfa8; }
+}

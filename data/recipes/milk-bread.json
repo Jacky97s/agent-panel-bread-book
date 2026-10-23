@@ -1,0 +1,156 @@
+{
+  "version": 1,
+  "id": "milk-bread",
+  "title": "湯種牛奶麵包",
+  "summary": "湯種用掉 5% 麵粉，水是湯種麵粉的五倍。牛奶補上其餘水分，烤成一條吐司。",
+  "tag": "吐司",
+  "yieldLabel": "一條吐司",
+  "totalFlourG": 450,
+  "targetHydration": 81.35,
+  "hydration": 81.35,
+  "leaven": {
+    "kind": "yeast",
+    "name": "即溶酵母",
+    "percent": 1.6
+  },
+  "baselineTempC": 24,
+  "baselineLeaven": "yeast",
+  "roomTempC": 24,
+  "ingredients": [
+    {
+      "id": "tz-flour",
+      "name": "高筋麵粉（湯種）",
+      "group": "flour",
+      "percent": 5,
+      "grams": 22.5,
+      "role": "tangzhong"
+    },
+    {
+      "id": "bread-flour",
+      "name": "高筋麵粉",
+      "group": "flour",
+      "percent": 95,
+      "grams": 427.5,
+      "balance": true,
+      "role": "dough"
+    },
+    {
+      "id": "tz-water",
+      "name": "水（湯種）",
+      "group": "water",
+      "percent": 25,
+      "grams": 112.5,
+      "locksTo": "tz-flour",
+      "lockRatio": 5,
+      "role": "tangzhong"
+    },
+    {
+      "id": "milk",
+      "name": "牛奶",
+      "group": "milk",
+      "percent": 50,
+      "grams": 225,
+      "balance": true,
+      "role": "dough"
+    },
+    {
+      "id": "egg",
+      "name": "蛋",
+      "group": "egg",
+      "percent": 15,
+      "grams": 67.5,
+      "role": "dough"
+    },
+    {
+      "id": "sugar",
+      "name": "糖",
+      "group": "sugar",
+      "percent": 12,
+      "grams": 54,
+      "role": "dough"
+    },
+    {
+      "id": "salt",
+      "name": "鹽",
+      "group": "salt",
+      "percent": 1.8,
+      "grams": 8.1,
+      "role": "dough"
+    },
+    {
+      "id": "yeast",
+      "name": "即溶酵母",
+      "group": "yeast",
+      "percent": 1.6,
+      "grams": 7.2,
+      "role": "dough"
+    },
+    {
+      "id": "butter",
+      "name": "無鹽奶油",
+      "group": "fat",
+      "percent": 10,
+      "grams": 45,
+      "role": "dough",
+      "waterFraction": 0.16
+    }
+  ],
+  "steps": [
+    {
+      "id": "tangzhong",
+      "name": "煮湯種",
+      "kind": "mix",
+      "baselineMin": 8,
+      "durationMin": 8,
+      "notes": "麵粉與水加熱到 65°C，攪成糊。"
+    },
+    {
+      "id": "cool",
+      "name": "湯種放涼",
+      "kind": "rest",
+      "baselineMin": 25,
+      "durationMin": 25
+    },
+    {
+      "id": "mix",
+      "name": "攪拌主麵團",
+      "kind": "mix",
+      "baselineMin": 18,
+      "durationMin": 18,
+      "notes": "奶油最後加，攪到擴展階段。"
+    },
+    {
+      "id": "bulk",
+      "name": "一次發酵",
+      "kind": "bulk",
+      "baselineMin": 60,
+      "durationMin": 60
+    },
+    {
+      "id": "shape",
+      "name": "分割滾圓、入模",
+      "kind": "shape",
+      "baselineMin": 20,
+      "durationMin": 20
+    },
+    {
+      "id": "proof",
+      "name": "最終發酵",
+      "kind": "proof",
+      "baselineMin": 50,
+      "durationMin": 50
+    },
+    {
+      "id": "bake",
+      "name": "烘烤",
+      "kind": "bake",
+      "baselineMin": 30,
+      "durationMin": 30,
+      "notes": "170°C。"
+    }
+  ],
+  "schedule": {
+    "anchorKind": "start",
+    "anchor": "2026-10-24T08:00:00+08:00"
+  }
+}
